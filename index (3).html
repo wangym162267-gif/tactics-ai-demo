@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>高压竞技战术与博弈心理诊断系统</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    body { background-color: #0b0f19; color: #cbd5e1; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .neon-border { box-shadow: 0 0 20px rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.25); }
+    .card-bg { background-color: #111827; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #111827; }
+    ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+  </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen flex flex-col items-center justify-between">
+
+  <!-- Header -->
+  <header class="w-full max-w-6xl mb-6 flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-800 pb-4 gap-4">
+    <div>
+      <div class="flex items-center gap-3">
+        <div class="w-3.5 h-3.5 bg-cyan-400 rounded-full animate-pulse shadow-lg shadow-cyan-400/50"></div>
+        <h1 class="text-xl md:text-2xl font-bold text-white tracking-wide">高压竞技战术与博弈心理诊断看板</h1>
+      </div>
+      <p class="text-xs text-gray-400 mt-1 font-mono">Multi-Agent Workflow & RAG Vector Knowledge Engine · Live Dashboard</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="text-xs bg-cyan-950 text-cyan-300 border border-cyan-800/80 px-3 py-1 rounded-full font-medium flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        Coze API 实时联调就绪
+      </span>
+    </div>
+  </header>
+
+  <!-- Main Grid -->
+  <main class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
+    
+    <!-- Left Input Panel -->
+    <section class="lg:col-span-5 card-bg rounded-2xl p-5 neon-border flex flex-col justify-between">
+      <div class="space-y-4">
+        <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-2">
+            <span>⚙️</span> 赛况参数与选手阻抗注入
+          </h2>
+          <span class="text-[10px] text-gray-500 font-mono">PARAMETERS</span>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-300 mb-1 flex items-center gap-1">
+            <span>🔴</span> 比分与局势情境 (Match Context)
+          </label>
+          <textarea id="matchScore" rows="2" class="w-full bg-gray-950/80 border border-gray-700/80 rounded-lg p-2.5 text-xs text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 focus:outline-none transition">决胜局 9:9 平，对方发球轮次</textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-300 mb-1 flex items-center gap-1">
+            <span>🧠</span> 自身技术与心理阻抗 (Player Issue)
+          </label>
+          <textarea id="playerIssue" rows="3" class="w-full bg-gray-950/80 border border-gray-700/80 rounded-lg p-2.5 text-xs text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 focus:outline-none transition">上一球接加转下旋搓球冒高被拍死，小臂明显发僵，心态发慌，不敢上手挑打</textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-300 mb-1 flex items-center gap-1">
+            <span>🏓</span> 对手客观打法特征 (Opponent Style)
+          </label>
+          <textarea id="opponentStyle" rows="3" class="w-full bg-gray-950/80 border border-gray-700/80 rounded-lg p-2.5 text-xs text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 focus:outline-none transition">右手横板，正手反胶，反手长胶，擅长借力磕拱变线，倒板频率高</textarea>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-gray-800/80 mt-4">
+        <button id="submitBtn" onclick="sendTacticsRequest()" class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold py-3 rounded-xl text-xs transition duration-200 shadow-lg shadow-cyan-900/40 flex justify-center items-center gap-2">
+          <span>🚀</span> 启动战术推演引擎
+        </button>
+
+        <div id="statusIndicator" class="text-xs text-center text-cyan-400 hidden mt-2 flex items-center justify-center gap-2">
+          <svg class="animate-spin h-3.5 w-3.5 text-cyan-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+          </svg>
+          <span>正在检索向量知识库与推演战术...</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Result Dashboard -->
+    <section class="lg:col-span-7 card-bg rounded-2xl p-6 neon-border flex flex-col">
+      <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-2">
+          <span>📊</span> 战术决策与生理重置诊断卡
+        </h2>
+        <span id="execTime" class="text-xs text-gray-500 font-mono">状态: 待机中</span>
+      </div>
+
+      <div id="outputArea" class="flex-1 text-sm text-gray-200 leading-relaxed overflow-y-auto max-h-[500px] pr-2 space-y-3">
+        <div class="h-full min-h-[350px] flex flex-col items-center justify-center text-gray-500 text-xs py-12">
+          <div class="w-14 h-14 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center mb-3">
+            <span class="text-2xl">⚡</span>
+          </div>
+          <p class="font-medium text-gray-400">等待注入参数并启动推演</p>
+          <p class="text-[11px] text-gray-600 mt-1">系统将自动解耦生理重置与前三板物理相克推演</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full max-w-6xl mt-6 pt-3 border-t border-gray-850 flex justify-between items-center text-[11px] text-gray-500">
+    <span>Tactical Diagnostic Agent v2.4</span>
+    <span>Powered by Coze Multi-Agent & RAG Pipeline</span>
+  </footer>
+
+  <script>
+    const BOT_ID = "7680858024512340011";
+    const TOKEN = "pat_4zYTBcKB5joOu9sSJ7Hxnt3fBbOW0QVjB5cQbifk0ZULmj4XAWDATlfQzYfoImKB";
+
+    async function sendTacticsRequest() {
+      const matchScore = document.getElementById("matchScore").value.trim();
+      const playerIssue = document.getElementById("playerIssue").value.trim();
+      const opponentStyle = document.getElementById("opponentStyle").value.trim();
+
+      const submitBtn = document.getElementById("submitBtn");
+      const statusIndicator = document.getElementById("statusIndicator");
+      const outputArea = document.getElementById("outputArea");
+      const execTime = document.getElementById("execTime");
+
+      if (!playerIssue || !opponentStyle) {
+        alert("请完整填写选手阻抗与对手打法特征！");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.classList.add("opacity-50", "cursor-not-allowed");
+      statusIndicator.classList.remove("hidden");
+      outputArea.innerHTML = `
+        <div class="space-y-4 animate-pulse pt-6">
+          <div class="h-4 bg-gray-800 rounded w-1/3"></div>
+          <div class="h-24 bg-gray-800/60 rounded-xl"></div>
+          <div class="h-4 bg-gray-800 rounded w-1/2"></div>
+          <div class="h-32 bg-gray-800/60 rounded-xl"></div>
+        </div>
+      `;
+      const startTime = Date.now();
+
+      const fullPrompt = "【比分情境】：" + matchScore + "\n【选手核心问题与心理阻抗】：" + playerIssue + "\n【对手客观打法特征】：" + opponentStyle;
+
+      try {
+        const response = await fetch("https://api.coze.cn/v3/chat", {
+          method: "POST",
+          headers: {
+            "Authorization": "Bearer " + TOKEN,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            bot_id: BOT_ID,
+            user_id: "athlete_candidate_001",
+            stream: false,
+            auto_save_history: true,
+            additional_messages: [
+              {
+                role: "user",
+                content: fullPrompt,
+                content_type: "text"
+              }
+            ]
+          })
+        });
+
+        const data = await response.json();
+        const costSeconds = ((Date.now() - startTime) / 1000).toFixed(1);
+        execTime.innerText = "耗时: " + costSeconds + "s";
+
+        if (data.code === 0 && data.data) {
+          const chatId = data.data.id;
+          const convId = data.data.conversation_id;
+          pollChatResult(chatId, convId, startTime);
+        } else {
+          outputArea.innerHTML = '<div class="p-4 bg-rose-950/40 border border-rose-800/80 rounded-xl text-rose-300 text-xs">接口响应异常: ' + (data.msg || "未知错误") + '</div>';
+          resetBtn();
+        }
+      } catch (err) {
+        outputArea.innerHTML = '<div class="p-4 bg-rose-950/40 border border-rose-800/80 rounded-xl text-rose-300 text-xs">跨域或网络异常: ' + err.message + '</div>';
+        resetBtn();
+      }
+    }
+
+    async function pollChatResult(chatId, convId, startTime) {
+      const outputArea = document.getElementById("outputArea");
+      const execTime = document.getElementById("execTime");
+
+      const interval = setInterval(async () => {
+        try {
+          const res = await fetch("https://api.coze.cn/v3/chat/retrieve?chat_id=" + chatId + "&conversation_id=" + convId, {
+            headers: { "Authorization": "Bearer " + TOKEN }
+          });
+          const pollData = await res.json();
+          const costSeconds = ((Date.now() - startTime) / 1000).toFixed(1);
+          execTime.innerText = "耗时: " + costSeconds + "s (推演中...)";
+
+          if (pollData.data && pollData.data.status === "completed") {
+            clearInterval(interval);
+            execTime.innerText = "总耗时: " + costSeconds + "s (完成)";
+            fetchMessages(chatId, convId);
+          } else if (pollData.data && pollData.data.status === "failed") {
+            clearInterval(interval);
+            outputArea.innerHTML = "<div class='p-4 bg-rose-950/40 border border-rose-800/80 rounded-xl text-rose-300 text-xs'>智能体推理中断，请检查工作流日志。</div>";
+            resetBtn();
+          }
+        } catch (e) {
+          clearInterval(interval);
+          outputArea.innerHTML = "<div class='p-4 bg-rose-950/40 border border-rose-800/80 rounded-xl text-rose-300 text-xs'>轮询异常: " + e.message + "</div>";
+          resetBtn();
+        }
+      }, 1500);
+    }
+
+    async function fetchMessages(chatId, convId) {
+      const outputArea = document.getElementById("outputArea");
+      try {
+        const msgRes = await fetch("https://api.coze.cn/v3/chat/message/list?chat_id=" + chatId + "&conversation_id=" + convId, {
+          headers: { "Authorization": "Bearer " + TOKEN }
+        });
+        const msgData = await msgRes.json();
+
+        if (msgData.code === 0 && msgData.data) {
+          const assistantMsg = msgData.data.find(m => m.role === "assistant" && m.type === "answer");
+          if (assistantMsg) {
+            outputArea.innerHTML = marked.parse(assistantMsg.content);
+          } else {
+            outputArea.innerHTML = "<div class='p-4 bg-amber-950/40 border border-amber-800/80 rounded-xl text-amber-300 text-xs'>未检索到有效的回复报文。</div>";
+          }
+        }
+      } catch (e) {
+        outputArea.innerHTML = "<div class='p-4 bg-rose-950/40 border border-rose-800/80 rounded-xl text-rose-300 text-xs'>拉取报文失败: " + e.message + "</div>";
+      } finally {
+        resetBtn();
+      }
+    }
+
+    function resetBtn() {
+      const submitBtn = document.getElementById("submitBtn");
+      const statusIndicator = document.getElementById("statusIndicator");
+      submitBtn.disabled = false;
+      submitBtn.classList.remove("opacity-50", "cursor-not-allowed");
+      statusIndicator.classList.add("hidden");
+    }
+  </script>
+</body>
+</html>
